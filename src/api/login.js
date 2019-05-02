@@ -1,24 +1,27 @@
-export const login = (context, userInfo) => {
-  context.getRequest('/login', {
-    name: userInfo.name,
-    pw: userInfo.pw
-  }).then(resp => {
-    if (resp && resp.status === 200) {
-      let data = resp.data
-      context.$store.commit('login', data.data)
-      let path = context.$route.query.redirect
-      console.log(path)
-      context.$router.replace({path: path === '/' || path === undefined ? '/home' : path})
+import fetch from '@/utils/fetch'
+
+export function login (email, password) {
+  return fetch({
+    url: '/user/login',
+    method: 'post',
+    data: {
+      email,
+      password
     }
   })
 }
 
-export const logoff = (context) => {
-  context.getRequest('/logoff')
-    .then(resp => {
-      if (resp && resp.status === 200) {
-        context.$store.commit('logout')
-        context.$router.replace('/')
-      }
-    })
+export function getInfo (token) {
+  return fetch({
+    url: '/user/info',
+    method: 'get',
+    params: { token }
+  })
+}
+
+export function logout () {
+  return fetch({
+    url: '/user/logout',
+    method: 'post'
+  })
 }
