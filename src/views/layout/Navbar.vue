@@ -1,4 +1,5 @@
 <template>
+  <div>
     <el-menu class="navbar" mode="horizontal">
         <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
         <levelbar></levelbar>
@@ -9,11 +10,25 @@
                 <i class="el-icon-caret-bottom"></i>
             </div>
             <el-dropdown-menu class="user-dropdown" slot="dropdown">
+                <el-dropdown-item><span @click="openMyInfoDialog" style="display:block;">我的</span></el-dropdown-item>
                 <el-dropdown-item><span @click="logout" style="display:block;">退出登录</span></el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
         <screenfull class='screenfull'></screenfull>
     </el-menu>
+
+    <el-dialog title="我的信息" :visible.sync="myInfoDialog" width="40%">
+      <el-form :model="self" class="demo-ruleForm" ref="detailsForm">
+        <el-form-item label="角色名称" :label-width="formLabelWidth">
+          <el-input v-model="self.name"></el-input>
+        </el-form-item>
+        <el-form-item label="角色备注" :label-width="formLabelWidth">
+          <el-input v-model="self.comment"></el-input>
+        </el-form-item>
+        <el-form-item label="到期时间" :label-width="formLabelWidth"/>
+      </el-form>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -29,7 +44,17 @@ export default {
       operator: this.getSessionStorage('operator'),
       apiName: {
         logOut: this.apiType.logOut
-      }
+      },
+      self: {
+        name: '',
+        comment: '',
+        email: '',
+        password: '',
+        phone: '',
+        role: ''
+      },
+      formLabelWidth: '50px',
+      myInfoDialog: false
     }
   },
   components: {
@@ -45,7 +70,42 @@ export default {
       'avatar'
     ])
   },
+  mounted () {
+    this.getUserInfo()
+    // this.getRoleInfo()
+  },
   methods: {
+    getUserInfo () {
+      this.fetch(this.apiType.getUserInfo, null, null,
+        respData => {
+          this.self.name = respData.data.name
+          this.self.phone = respData.data.phone
+          this.self.email = respData.data.email
+          this.self.comment = respData.data.comment
+          this.self.role = this.convertRole(respData.data.roleId)
+        })
+    },
+    convertRole (roleId) {
+      switch (roleId) {
+        case 1:
+          return '超级管理员'
+        case 2:
+          return '地方管理员'
+        case 3:
+          return '商业渠道'
+        case 4:
+          return '药厂主管'
+        case 5:
+          return '销售代表'
+        case 6:
+          return '促销员'
+        default:
+          return '暂无角色'
+      }
+    },
+    openMyInfoDialog () {
+      this.myInfoDialog = true
+    },
     toggleSideBar () {
       this.$store.dispatch('ToggleSideBar')
     },

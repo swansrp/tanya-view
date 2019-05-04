@@ -18,9 +18,7 @@ export default {
       if (!token) {
         this.fetchToken()
       } else {
-        console.log(111)
         _this.$router.addRoutes(this.constantRouterMap)
-        console.log(_this.$router)
       }
     },
     // 页面刷新获取token值

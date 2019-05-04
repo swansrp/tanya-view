@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
-import {Loading, Message} from 'element-ui'
+import {Loading, Message, Alert} from 'element-ui'
 import store from '@/store'
 
 let loadingInstance
@@ -31,8 +31,12 @@ axios.interceptors.response.use(resp => {
     Message.error({message: '服务器被吃了⊙﹏⊙∥'})
   } else if (err.response.status === 403) {
     Message.error({message: '权限不足,请联系管理员!'})
-  } else if (err.response.status === 500 && err.response.data.code === 'SRP0002') {
-    Message.error({message: err.response.data.data})
+  } else if (err.response.status === 500) {
+    if (err.response.data.code === 'SRP0002') {
+      Message.error({message: err.response.data.data})
+    } else {
+      Alert.error({message: err.response.data.data})
+    }
   } else {
     Message.error({message: '未知错误'})
   }
