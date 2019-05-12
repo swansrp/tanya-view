@@ -14,10 +14,13 @@ Vue.prototype.serviceType = {
 Vue.prototype.apiType = {
   getToken: {url: '/token', method: 'GET'},
   login: {url: '/login', method: 'GET'}, // 登录
+  ssoLogin: {url: '/sso', method: 'GET'}, // SSO 登录
   logoff: {url: '/logoff', method: 'GET'}, // 登出
   getMenu: {url: '/menu/query', method: 'GET'}, // 获取用户权限树
   getUserInfo: {url: '/info', method: 'GET'}, // 获取用户信息
+  updateUserInfo: {url: '/info', method: 'POST'}, // 更新用户信息
   getRoleInfo: {url: Vue.prototype.serviceType.role + '/self', method: 'GET'}, // 获取本人职位信息
+  updateRole: {url: Vue.prototype.serviceType.role + '/update', method: 'POST'}, // 更新角色信息
   querySubordinate: {url: Vue.prototype.serviceType.role + '/subordinate', method: 'GET'}, // 获取下属
   getCaptcha: {url: '/captcha.jpg', method: 'GET'} // 获取验证码
 }

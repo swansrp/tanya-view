@@ -1,64 +1,66 @@
 <template>
-  <div class="login-container" id='login'>
-    <el-form class="login-form" autoComplete="on" :rules="loginRules" :model="loginForm" ref="loginForm"
-             label-position="left">
-      <div class="title-container">
-        <h3 class="title">权限管理系统</h3>
-      </div>
-      <el-form-item prop="userName">
-                <span class="svg-container svg-container_login">
-                    <icon name="user"></icon>
-                </span>
-        <el-input name="userName"
-                  type="text"
-                  v-model="loginForm.userName"
-                  autoComplete="on"
-                  placeholder="登录名"/>
-      </el-form-item>
-      <el-form-item prop="password">
-                <span class="svg-container">
-                    <icon name="lock"></icon>
-                </span>
-        <el-input name="password"
-                  :type="passwordBlur?'password':'text'"
-                  @keyup.enter.native="handleLogin"
-                  v-model="loginForm.password"
-                  autoComplete="on"
-                  placeholder="密码">
-          <i slot="suffix" class="el-icon-view" @click="changePasswordBlur"></i>
-        </el-input>
-      </el-form-item>
-      <el-form-item prop="graphCode">
-                <span class="svg-container">
-                    <icon name="tags"></icon>
-                </span>
-        <el-input style="width:40%;"
-                  name="graphCode"
-                  type="graphCode"
-                  @keyup.enter.native="handleLogin"
-                  v-model="loginForm.graphCode"
-                  autoComplete="on"
-                  placeholder="验证码"/>
-        <img v-bind:src="graphCodeUrl"
-             style="float: right; cursor:pointer;"
-             @click="getPermitGraphCode()">
-      </el-form-item>
-      <el-button type="primary" class="loginBtn" @click.native.prevent="handleLogin">
-        登录
-      </el-button>
-      <el-button type="primary" class="ssoBtn" @click.native.prevent="ssoLogin">
-        微信登录
-      </el-button>
-    </el-form>
-    <el-dialog :visible.sync="qrCodeDialog" @open="openQRCodeDialog()" @close="closeQRCodeDialog()">
-      <div id="qrcode"></div>
+  <div>
+    <div class="login-container" id='login'>
+      <el-form class="login-form" autoComplete="on" :rules="loginRules" :model="loginForm" ref="loginForm"
+               label-position="left">
+        <div class="title-container">
+          <h3 class="title">权限管理系统</h3>
+        </div>
+        <el-form-item prop="userName">
+                  <span class="svg-container svg-container_login">
+                      <icon name="user"></icon>
+                  </span>
+          <el-input name="userName"
+                    type="text"
+                    v-model="loginForm.userName"
+                    autoComplete="on"
+                    placeholder="登录名"/>
+        </el-form-item>
+        <el-form-item prop="password">
+                  <span class="svg-container">
+                      <icon name="lock"></icon>
+                  </span>
+          <el-input name="password"
+                    :type="passwordBlur?'password':'text'"
+                    @keyup.enter.native="handleLogin"
+                    v-model="loginForm.password"
+                    autoComplete="on"
+                    placeholder="密码">
+            <i slot="suffix" class="el-icon-view" @click="changePasswordBlur"></i>
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="graphCode">
+                  <span class="svg-container">
+                      <icon name="tags"></icon>
+                  </span>
+          <el-input style="width:40%;"
+                    name="graphCode"
+                    type="graphCode"
+                    @keyup.enter.native="handleLogin"
+                    v-model="loginForm.graphCode"
+                    autoComplete="on"
+                    placeholder="验证码"/>
+          <img v-bind:src="graphCodeUrl"
+               style="float: right; cursor:pointer;"
+               @click="getPermitGraphCode()">
+        </el-form-item>
+        <el-button type="primary" class="loginBtn" @click.native.prevent="handleLogin">
+          登录
+        </el-button>
+        <el-button type="primary" class="ssoBtn" @click.native.prevent="ssoLogin">
+          微信登录
+        </el-button>
+      </el-form>
+    </div>
+    <el-dialog title="使用小程序扫码登录" :visible.sync="qrCodeDialog" center width="13%" @open="openQRCodeDialog()" @close="closeQRCodeDialog()">
+      <vue-qr :text="qrCodeUrl" :size="200" :callback="qrcodeCallBack" style="text-align:center"></vue-qr>
+      <div style="text-align:center">{{ loginStatus }}</div>
     </el-dialog>
   </div>
 
 </template>
 
 <script>
-import QRCode from 'qrcodejs2'
 export default {
   name: 'login',
   data () {
@@ -75,11 +77,14 @@ export default {
       },
       graphCodeUrl: '',
       passwordBlur: true,
-      qrCodeDialog: false
+      qrCodeUrl: '',
+      qrCodeDialog: false,
+      loginStatus: '正在登录',
+      ssoTimer: {},
+      ssoDisplayTimer: {}
     }
   },
   mounted () {
-    this.fetchToken()
     this.getPermitGraphCode()
   },
   methods: {
@@ -92,7 +97,6 @@ export default {
       if (!token) {
         this.fetchToken()
       }
-      console.log('getToken')
       return token
     },
     getPermitGraphCode () {
@@ -101,14 +105,12 @@ export default {
       this.graphCodeUrl = _this.baseUrl + _this.apiType.getCaptcha.url + '?token=' + token + '&d=' + Math.random()
     },
     fetchToken () {
-      console.log('fetchToken')
       const _this = this
       this.fetch(_this.apiType.getToken, null, null, responseData => {
         _this.setSessionStorage('token', responseData.data.token)
       })
     },
     handleLogin () {
-      console.log('handleLogin')
       const _this = this
       const userInfo = {
         operator: this.loginForm.userName,
@@ -118,6 +120,7 @@ export default {
       }
       _this.$store.dispatch('Login', userInfo).then(respData => {
         _this.setSessionStorage('auth_token', respData.data.token)
+        _this.setSessionStorage('name', respData.data.name)
         _this.setSessionStorage('operator', respData.data.userName)
         _this.$router.push({path: '/'})
       }).catch(errData => {
@@ -126,30 +129,39 @@ export default {
         this.getPermitGraphCode()
       })
     },
-    qrcode (url) {
-      let qrcode = new QRCode('qrcode', {
-        width: 132,
-        height: 132,
-        text: url, // 二维码地址
-        colorDark: '#000',
-        colorLight: '#fff'
-      })
-      console.log(qrcode)
-    },
     closeQRCodeDialog () {
       this.qrCodeDialog = false
-      document.getElementById('qrcode').innerHTML = ''
+      clearTimeout(this.ssoTimer)
+      clearTimeout(this.ssoDisplayTimer)
     },
     openQRCodeDialog () {
-      console.log('openQRCodeDialog')
-      this.$nextTick(function () {
-        const token = this.getToken()
-        this.qrcode(token)
+      this.qrCodeUrl = this.getToken()
+    },
+    ssoDisplay () {
+      this.loginStatus += '.'
+      if (this.loginStatus.length > 10) {
+        this.loginStatus = this.loginStatus.substring(0, 4)
+      }
+    },
+    sso () {
+      const _this = this
+      _this.$store.dispatch('SsoLogin', this.getToken()).then(respData => {
+        clearTimeout(this.ssoTimer)
+        _this.setSessionStorage('auth_token', respData.data.token)
+        _this.setSessionStorage('name', respData.data.name)
+        _this.setSessionStorage('operator', respData.data.userName)
+        _this.$router.push({path: '/'})
+      }).catch(errData => {
+        this.ssoTimer = setTimeout(this.sso, 3000)
       })
     },
     ssoLogin () {
-      console.log('ssoLogin')
       this.qrCodeDialog = true
+      this.ssoTimer = setTimeout(this.sso, 5000)
+      this.ssoDisplayTimer = setInterval(this.ssoDisplay, 1000)
+    },
+    qrcodeCallBack () {
+      console.log('qrcodeCallBack')
     }
   }
 }
@@ -168,24 +180,24 @@ export default {
     }
 
     .el-input {
-      display: inline-block;
-      height: 47px;
-      width: 89%;
+         display: inline-block;
+         height: 47px;
+         width: 89%;
 
-      input {
-        background: transparent;
-        border: 0px;
-        -webkit-appearance: none;
-        border-radius: 0px;
-        padding: 12px 5px 12px 15px;
-        color: $light_gray;
-        height: 47px;
+         input {
+           background: transparent;
+           border: 0px;
+           -webkit-appearance: none;
+           border-radius: 0px;
+           padding: 12px 5px 12px 15px;
+           color: $light_gray;
+           height: 47px;
 
-        &:-webkit-autofill {
-          -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
-          -webkit-text-fill-color: #fff !important;
-        }
-      }
+           &:-webkit-autofill {
+             -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
+             -webkit-text-fill-color: #fff !important;
+           }
+         }
     }
 
     .el-form-item {
@@ -302,6 +314,12 @@ export default {
       width: 35%;
       margin-right: 20px;
       float: right;
+    }
+
+    .qr-container {
+      width: 70%;
+      margin: 0 auto;
+      text-align: center;
     }
   }
 </style>

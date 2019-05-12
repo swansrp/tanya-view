@@ -19,10 +19,10 @@
     "js-cookie": "^2.2.0",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
-    "qrcodejs2": "0.0.2",
     "screenfull": "^4.2.0",
     "vee-validate": "^2.2.4",
     "vue": "^2.5.2",
+    "vue-qr": "^2.1.0",
     "vue-router": "^3.0.1",
     "vuex": "^3.1.0"
   },

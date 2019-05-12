@@ -25,10 +25,8 @@ export default {
     fetchToken () {
       console.log('fetchToken')
       const _this = this
-      console.log(this)
       this.fetch(this.apiType.getToken, null, null,
         responseData => {
-          console.log(this)
           _this.setSessionStorage('token', responseData.data.token)
           _this.$router.addRoutes(_this.constantRouterMap)
         })

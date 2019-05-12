@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 import Element from 'element-ui'
+import VueQr from 'vue-qr'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'normalize.css/normalize.css'
 // 图标
@@ -27,13 +28,14 @@ Vue.use(Element, {
   size: 'medium'
 })
 Vue.use(Vueawesome)
+Vue.use(VueQr)
 
 router.beforeEach((to, from, next) => {
   console.log('路由变化:' + from.name + ' -> ' + to.name)
   NProgress.start()
-  const operator = Vue.prototype.getSessionStorage('operator')
+  const name = Vue.prototype.getSessionStorage('name')
 
-  if (operator) {
+  if (name) {
     if (to.path === '/login') {
       next({path: '/'})
       NProgress.done() // router在hash模式下 手动改变hash 重定向回来 不会触发afterEach 暂时hack方案 ps：history模式下无问题，可删除该行！
