@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Cookies from 'js-cookie'
 
 Vue.prototype.setSessionStorage = function (key, value) {
   window.sessionStorage.setItem(key, value)
@@ -12,6 +13,19 @@ Vue.prototype.getSessionStorage = function (key) {
 }
 Vue.prototype.removeSessionStorage = function (key) {
   window.sessionStorage.removeItem(key)
+}
+Vue.prototype.setCookie = function (key, value) {
+  Cookies.set(key, value)
+}
+Vue.prototype.getCookie = function (key) {
+  const value = Cookies.get(key)
+  if (!value || value === '') {
+    return ''
+  }
+  return value
+}
+Vue.prototype.removeCookie = function (key) {
+  Cookies.remove(key)
 }
 Vue.prototype.setLocalStorage = function (key, value) {
   if (!value) {

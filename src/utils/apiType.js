@@ -22,7 +22,17 @@ Vue.prototype.apiType = {
   getRoleInfo: {url: Vue.prototype.serviceType.role + '/self', method: 'GET'}, // 获取本人职位信息
   updateRole: {url: Vue.prototype.serviceType.role + '/update', method: 'POST'}, // 更新角色信息
   querySubordinate: {url: Vue.prototype.serviceType.role + '/subordinate', method: 'GET'}, // 获取下属
-  getCaptcha: {url: '/captcha.jpg', method: 'GET'} // 获取验证码
+  getCaptcha: {url: '/captcha.jpg', method: 'GET'}, // 获取验证码
+  queryShop: {url: Vue.prototype.serviceType.shop + '/query', method: 'POST'}, // 获取客户(药店)
+  updateShop: {url: Vue.prototype.serviceType.shop + '/update', method: 'POST'}, // 更新客户(药店)
+  deleteShop: {url: Vue.prototype.serviceType.shop + '/', method: 'DELETE'}, // 删除客户(药店)
+  getShopTemplate: {url: Vue.prototype.serviceType.shop + '/template', method: 'GET', fileName: '客户(药店)模板.xls'}, // 获取客户(药店)模板
+  uploadShop: {url: Vue.prototype.serviceType.shop + '/upload', method: 'POST'}, // 上传客户(药店)列表
+  queryGoods: {url: Vue.prototype.serviceType.goods + '/query', method: 'POST'}, // 获取商品(药品)
+  updateGoods: {url: Vue.prototype.serviceType.goods + '/update', method: 'POST'}, // 更新商品(药品)
+  deleteGoods: {url: Vue.prototype.serviceType.goods + '/', method: 'DELETE'}, // 删除商品(药品)
+  getGoodsTemplate: {url: Vue.prototype.serviceType.goods + '/template', method: 'GET', fileName: '商品(药品)模板.xls'}, // 获取商品(药品)模板
+  uploadGoods: {url: Vue.prototype.serviceType.goods + '/upload', method: 'POST'} // 上传商品(药品)列表
 }
 
 export default {}
