@@ -161,7 +161,7 @@ export default {
     },
     updateShop () {
       const _this = this
-      this.fetch(this.apiType.deleteShop, null, this.modifyShop,
+      this.fetch(this.apiType.updateShop, null, this.modifyShop,
         respData => {
           _this.shopList.splice(_this.currentRow.index, 1, respData.data.info[0])
         })
