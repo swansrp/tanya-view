@@ -109,6 +109,13 @@
              v-if="parseInt(new Date(scope.row.endAt.substring(0,10)).getTime()/1000)<parseInt(new Date().getTime()/1000)"></i>
         </template>
       </el-table-column>
+      <el-table-column
+        align="center"
+        label='配置商品'>
+        <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="openBindGoodsDialog">
+        </el-button>
+      </el-table-column>
+
     </el-table>
     <el-pagination class="paging"
                    @current-change="handleCurrentChange"
@@ -119,7 +126,8 @@
                    :total="totalCount">
     </el-pagination>
 
-    <el-dialog :title="title" :visible.sync="detailsDialog" width="40%" @open="setData(currentRow, modifyRole)" @close="clearForm()">
+    <el-dialog :title="detailsTitle" :visible.sync="detailsDialog" width="40%" @open="setData(currentRow, modifyRole)"
+               @close="clearForm()">
       <el-form :model="currentRow" class="demo-ruleForm" ref="detailsForm">
         <el-form-item label="角色名称" :label-width="formLabelWidth">
           <el-input v-model="modifyRole.title"></el-input>
@@ -149,16 +157,16 @@
           <el-input-number
             v-model="modifyRole.permissionDetailsVO.traderNumber"
             :min="1"
-            :max="10"
+            :max="1000"
             label="描述文字"
             size="mini">
           </el-input-number>
         </el-form-item>
-        <el-form-item label="药品数量" :label-width="formLabelWidth">
+        <el-form-item label="商品数量" :label-width="formLabelWidth">
           <el-input-number
             v-model="modifyRole.permissionDetailsVO.goodsNumber"
             :min="1"
-            :max="10"
+            :max="1000"
             label="描述文字"
             size="mini">
           </el-input-number>
@@ -178,6 +186,34 @@
         <el-form-item>
           <el-button size="small" type="primary" @click="updateRole">确 定</el-button>
           <el-button size="small" @click="detailsDialog = false">取 消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
+    <el-dialog :title="bindGoodsTitle" :visible.sync="bindGoodsDialog" width="80%" @open="setData(currentRow, modifyRole)"
+               @close="clearForm()">
+      <el-transfer
+        style="text-align: left; display: inline-block"
+        v-model="newBindGoodsList"
+        filterable
+        :left-default-checked="[]"
+        :right-default-checked="[]"
+        :titles="['未绑定', '已绑定']"
+        :button-texts="['去除', '绑定']"
+        :format="{
+            noChecked: '${total}',
+            hasChecked: '${checked}/${total}'
+          }"
+        @change="handleBindChange"
+        @left-check-change="handleLeftCheck"
+        :data="goodsList">
+        <span slot-scope="{ option }">{{ option.label }}</span>
+      </el-transfer>
+
+      <el-form>
+        <el-form-item>
+          <el-button size="small" type="primary" @click="bindGoods">确 定</el-button>
+          <el-button size="small" @click="bindGoodsDialog = false">取 消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -251,9 +287,11 @@ export default {
       roleTitle: null,
       // 对话框
       detailsDialog: false,
+      bindGoodsDialog: false,
       // 详情框
       formLabelWidth: '100px',
-      title: '下属信息详情',
+      detailsTitle: '下属信息详情',
+      bindGoodsTitle: '商品绑定',
       pickerOptions: {
         disabledDate: (time) => {
           let endDate = this.$store.getters.role.endAt
@@ -288,7 +326,13 @@ export default {
             picker.$emit('pick', date)
           }
         }]
-      }
+      },
+      // 绑定商品
+      goodsList: [],
+      oldBindGoodsList: [],
+      newBindGoodsList: [],
+      bindGoodsList: [],
+      unbindGoodsList: []
     }
   },
   mounted () {
@@ -317,6 +361,138 @@ export default {
         this.setData(respData.data, this.currentRow)
       })
       this.detailsDialog = false
+    },
+    bindGoods () {
+      console.log('新绑定产品', this.bindGoodsList)
+      console.log('去除绑定产品', this.unbindGoodsList)
+      const _this = this
+      const body = {
+        bindIdList: _this.bindGoodsList,
+        unbindIdList: _this.unbindGoodsList,
+        targetId: _this.currentRow.id
+      }
+      this.fetch(this.apiType.bindGoods, null, body, resp => {
+        console.log(resp)
+        this.bindGoodsDialog = false
+      })
+    },
+    queryGoods () {
+      this.goodsList.splice(0, this.goodsList.length)
+      this.newBindGoodsList.splice(0, this.newBindGoodsList.length)
+      this.oldBindGoodsList.splice(0, this.oldBindGoodsList.length)
+      this.bindGoodsList.splice(0, this.bindGoodsList.length)
+      this.unbindGoodsList.splice(0, this.unbindGoodsList.length)
+      const _this = this
+      return new Promise((resolve, reject) => {
+        const param = {
+          factoryId: _this.currentRow.id
+        }
+        const body = {}
+        _this.fetch(this.apiType.queryGoods, null, body, resp => {
+          resp.data.info.forEach(info => {
+            _this.goodsList.push({
+              key: info.goodsInfoVO.id,
+              label: info.goodsInfoVO.title
+            })
+          })
+          _this.fetch(this.apiType.queryBindGoods, param, null, resp => {
+            resp.data.info.forEach(info => {
+              _this.oldBindGoodsList.push(
+                info.goodsInfoVO.id
+              )
+            })
+            resolve()
+          }, errResp => {
+            console.log('queryBindGoods Failed')
+            reject(errResp)
+          })
+        }, errResp => {
+          console.log('queryGoods Failed')
+          reject(errResp)
+        })
+      })
+    },
+    openBindGoodsDialog () {
+      const _this = this
+      this.detailsDialog = false
+      this.bindGoodsDialog = true
+      this.queryGoods()
+        .then(() => {
+          _this.newBindGoodsList = _this.oldBindGoodsList
+        })
+    },
+    handleBindChange (value, direction, movedKeys) {
+      const _this = this
+      movedKeys.forEach(movedKey => {
+        let matched = false
+        _this.oldBindGoodsList.forEach(old => {
+          if (movedKey === old) {
+            matched = true
+          }
+        })
+        if (direction === 'left') {
+          _this.goodsList.forEach(goods => {
+            goods.disabled = false
+          })
+          if (matched) {
+            _this.unbindGoodsList.push(movedKey)
+          } else {
+            _this.bindGoodsList.splice(_this.bindGoodsList.indexOf(movedKey), 1)
+          }
+        } else {
+          if (matched) {
+            _this.unbindGoodsList.splice(_this.unbindGoodsList.indexOf(movedKey), 1)
+          } else {
+            _this.bindGoodsList.push(movedKey)
+          }
+        }
+      })
+    },
+    handleLeftCheck (selectedKey, newSelectedKey) {
+      console.log('selectedKey ', selectedKey.length, 'bindGoodsList ', this.bindGoodsList.length, 'oldBindGoodsList ',
+        this.oldBindGoodsList.length, 'unbindGoodsList ', this.unbindGoodsList.length)
+      if (selectedKey.length + this.bindGoodsList.length + this.oldBindGoodsList.length - this.unbindGoodsList.length === this.currentRow.permissionDetailsVO.goodsNumber) {
+        this.goodsList.forEach(goods => {
+          goods.disabled = true
+          selectedKey.forEach(key => {
+            if (goods.key === key) {
+              goods.disabled = false
+            }
+          })
+          this.newBindGoodsList.forEach(bindId => {
+            if (goods.key === bindId) {
+              goods.disabled = false
+            }
+          })
+        })
+      } else {
+        this.goodsList.forEach(goods => {
+          goods.disabled = false
+        })
+      }
+    },
+    handleRightCheck (selectedKey, newSelectedKey) {
+      console.log('selectedKey ', selectedKey.length, 'bindGoodsList ', this.bindGoodsList.length, 'oldBindGoodsList ',
+        this.oldBindGoodsList.length, 'unbindGoodsList ', this.unbindGoodsList.length)
+      if (this.bindGoodsList.length + this.oldBindGoodsList.length - this.unbindGoodsList.length - selectedKey.length === this.currentRow.permissionDetailsVO.goodsNumber) {
+        this.goodsList.forEach(goods => {
+          goods.disabled = true
+          selectedKey.forEach(key => {
+            if (goods.key === key) {
+              goods.disabled = false
+            }
+          })
+          this.newBindGoodsList.forEach(bindId => {
+            if (goods.key === bindId) {
+              goods.disabled = false
+            }
+          })
+        })
+      } else {
+        this.goodsList.forEach(goods => {
+          goods.disabled = false
+        })
+      }
     },
     enableUserEdit (row) {
       this.currentSelectUserId = row.id
@@ -360,8 +536,12 @@ export default {
     toggleSelection (row, column, cell, event) {
       this.currentSelectUserId = row.id
       this.roleTitle = row.title
-      this.detailsDialog = true
+      if (column.label !== '配置商品') {
+        this.detailsDialog = true
+      }
       this.currentRow = row
+      const limit = this.currentRow.permissionDetailsVO.goodsNumber
+      this.bindGoodsTitle = '商品绑定' + '--最大绑定数量: [' + limit + ']'
     },
     handleCurrentChange (currentPage) {
       this.$emit('currentPageChange', currentPage)

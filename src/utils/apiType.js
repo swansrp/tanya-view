@@ -29,10 +29,12 @@ Vue.prototype.apiType = {
   getShopTemplate: {url: Vue.prototype.serviceType.shop + '/template', method: 'GET', fileName: '客户(药店)模板.xls'}, // 获取客户(药店)模板
   uploadShop: {url: Vue.prototype.serviceType.shop + '/upload', method: 'POST'}, // 上传客户(药店)列表
   queryGoods: {url: Vue.prototype.serviceType.goods + '/query', method: 'POST'}, // 获取商品(药品)
+  queryBindGoods: {url: Vue.prototype.serviceType.goods + '/bind', method: 'GET'}, // 获取商品(药品)绑定情况
   updateGoods: {url: Vue.prototype.serviceType.goods + '/update', method: 'POST'}, // 更新商品(药品)
   deleteGoods: {url: Vue.prototype.serviceType.goods + '/', method: 'DELETE'}, // 删除商品(药品)
   getGoodsTemplate: {url: Vue.prototype.serviceType.goods + '/template', method: 'GET', fileName: '商品(药品)模板.xls'}, // 获取商品(药品)模板
-  uploadGoods: {url: Vue.prototype.serviceType.goods + '/upload', method: 'POST'} // 上传商品(药品)列表
+  uploadGoods: {url: Vue.prototype.serviceType.goods + '/upload', method: 'POST'}, // 上传商品(药品)列表
+  bindGoods: {url: Vue.prototype.serviceType.goods + '/bind', method: 'POST'} // 绑定商品(药品)列表
 }
 
 export default {}
