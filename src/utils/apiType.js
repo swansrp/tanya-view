@@ -12,6 +12,8 @@ Vue.prototype.serviceType = {
 }
 
 Vue.prototype.apiType = {
+  getDicount: {url: '/discount/query', method: 'POST'},
+  getOrder: {url: '/order/query', method: 'POST'},
   getToken: {url: '/token', method: 'GET'},
   login: {url: '/login', method: 'GET'}, // 登录
   ssoLogin: {url: '/sso', method: 'GET'}, // SSO 登录
