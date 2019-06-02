@@ -169,10 +169,10 @@ export default {
     },
     confirm () {
       let param = {
-        discountid: this.modifyRole.id,
+        discountId: this.modifyRole.id,
         confirmed: 1
       }
-      this.fetch(this.apiType.confirmDicount, param, null,
+      this.fetch(this.apiType.confirmDiscount, param, null,
         respData => {
           console.log(respData)
           this.getDiscountList()

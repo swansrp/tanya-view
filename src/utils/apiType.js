@@ -12,10 +12,10 @@ Vue.prototype.serviceType = {
 }
 
 Vue.prototype.apiType = {
-  getDicount: {url: '/discount/query', method: 'POST'},
-  getOrder: {url: '/order/query', method: 'POST'},
-  confirmDicount: {url: '/discount/confirm', method: 'GET'},
-  confirmOrder: {url: '/order/confirm', method: 'GET'},
+  getDiscount: {url: Vue.prototype.serviceType.discount + '/query', method: 'POST'},
+  getOrder: {url: Vue.prototype.serviceType.order + '/query', method: 'POST'},
+  confirmDiscount: {url: Vue.prototype.serviceType.discount + '/confirm', method: 'GET'},
+  confirmOrder: {url: Vue.prototype.serviceType.order + '/confirm', method: 'GET'},
   getToken: {url: '/token', method: 'GET'},
   login: {url: '/login', method: 'GET'}, // 登录
   ssoLogin: {url: '/sso', method: 'GET'}, // SSO 登录
