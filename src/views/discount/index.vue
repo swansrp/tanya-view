@@ -205,7 +205,7 @@ export default {
         title: this.searchContent,
         confirmed: this.comfirmStatus
       }
-      this.fetch(this.apiType.getDicount, param, body,
+      this.fetch(this.apiType.getDiscount, param, body,
         respData => {
           console.log(respData)
           this.discountList = respData.data.info
