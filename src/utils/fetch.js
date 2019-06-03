@@ -45,6 +45,7 @@ axios.interceptors.response.use(resp => {
   }
   if (resp.data.code === 'SRP0004') {
     window.sessionStorage.removeItem('token')
+    window.sessionStorage.removeItem('name')
     router.push({path: '/login'})
     return Promise.reject(resp)
   }

@@ -108,6 +108,7 @@ export default {
       const _this = this
       this.fetch(_this.apiType.getToken, null, null, responseData => {
         _this.setSessionStorage('token', responseData.data.token)
+        _this.graphCodeUrl = _this.baseUrl + _this.apiType.getCaptcha.url + '?token=' + responseData.data.token + '&d=' + Math.random()
       })
     },
     handleLogin () {
