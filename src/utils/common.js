@@ -46,6 +46,6 @@ Vue.prototype.checkToken = function (key) {
   return reg.test(key)
 }
 
-Vue.prototype.baseUrl = 'https://api.tanyakeji.com'
+Vue.prototype.baseUrl = process.env.baseUrl
 
 export default {}
