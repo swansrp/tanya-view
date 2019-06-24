@@ -40,41 +40,77 @@
       highlight-current-row
       ref="singleTable">
       <el-table-column
-        align="left"
+        align="center"
         label="药品名称"
         prop="goodsInfoVO.title"
         span="6">
       </el-table-column>
       <el-table-column
-        align="left"
-        label="客户"
+        align="center"
+        label="药品编号"
+        prop="goodsInfoVO.code"
+        span="6">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="客户名称"
         prop="shopInfoVO.title"
         span="6">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="客户编号"
+        prop="shopInfoVO.code"
+        span="6">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label='厂牌'
+        prop="goodsInfoVO.production"
+        span="3">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label='规格'
+        prop="goodsInfoVO.spec"
+        span="3">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label='单位'
+        prop="goodsInfoVO.unit"
+        span="1">
       </el-table-column>
       <el-table-column
         align="center"
         label='数量'
         prop="discountInfoVO"
         :formatter="getNum"
-        span="6">
+        span="3">
       </el-table-column>
       <el-table-column
         align="center"
         label='总价'
         prop="orderInfoVO.amount"
-        span="6">
+        span="3">
       </el-table-column>
       <el-table-column
         align="center"
         label='单盒价'
         prop="discountInfoVO"
         :formatter="getNum2"
-        span="6">
+        span="3">
       </el-table-column>
       <el-table-column
         align="center"
         label='时间'
         prop="orderInfoVO.startAt"
+        span="6">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="提交人"
+        prop="creatorInfoVO.comment"
         span="6">
       </el-table-column>
       <el-table-column
