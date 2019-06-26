@@ -31,7 +31,6 @@
     </div>
     <el-table
       :data="orderList"
-      @row-click='confirmDialog'
       element-loading-text="加载中"
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
@@ -132,6 +131,15 @@
           <i class="el-icon-success" v-if="scope.row.merchantConfirmStatus === 1"></i>
           <i class="el-icon-error" v-else-if="scope.row.merchantConfirmStatus === 0"></i>
           <i class="el-icon-warning" v-else></i>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label='操作'
+        prop="merchantConfirmStatus"
+        width="100px">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" v-if="scope.row.merchantConfirmStatus !== 0 && scope.row.merchantConfirmStatus !== 1" @click="confirmDialog(scope.row)">审批</el-button>
         </template>
       </el-table-column>
     </el-table>
