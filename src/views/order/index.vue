@@ -40,14 +40,8 @@
       ref="singleTable">
       <el-table-column
         align="center"
-        label="药品名称"
-        prop="goodsInfoVO.title"
-        span="6">
-      </el-table-column>
-      <el-table-column
-        align="center"
-        label="药品编号"
-        prop="goodsInfoVO.code"
+        label="客户编号"
+        prop="shopInfoVO.code"
         span="6">
       </el-table-column>
       <el-table-column
@@ -58,8 +52,14 @@
       </el-table-column>
       <el-table-column
         align="center"
-        label="客户编号"
-        prop="shopInfoVO.code"
+        label="药品编号"
+        prop="goodsInfoVO.code"
+        span="6">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="药品名称"
+        prop="goodsInfoVO.title"
         span="6">
       </el-table-column>
       <el-table-column
@@ -139,7 +139,8 @@
         prop="merchantConfirmStatus"
         width="100px">
         <template slot-scope="scope">
-          <el-button type="text" size="small" v-if="scope.row.merchantConfirmStatus !== 0 && scope.row.merchantConfirmStatus !== 1" @click="confirmDialog(scope.row)">审批</el-button>
+          <el-button type="text" size="small" v-if="scope.row.merchantConfirmStatus !== 0 && scope.row.merchantConfirmStatus !== 1" @click="confirmItem(scope.row)">审批</el-button>
+          <el-button type="text" size="small" v-if="scope.row.merchantConfirmStatus !== 0 && scope.row.merchantConfirmStatus !== 1" @click="rejectItem(scope.row)">拒绝</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -212,6 +213,34 @@ export default {
     this.getOrderList()
   },
   methods: {
+    rejectItem (row) {
+      let param = {
+        orderid: row.orderInfoVO.id,
+        confirmed: 0
+      }
+      this.fetch(this.apiType.confirmOrder, param, null,
+        respData => {
+          console.log(respData)
+          // this.currentPage = 1
+          this.getOrderList()
+        })
+      this.detailsDialog = false
+      this.clearForm()
+    },
+    confirmItem (row) {
+      let param = {
+        orderid: row.orderInfoVO.id,
+        confirmed: 1
+      }
+      this.fetch(this.apiType.confirmOrder, param, null,
+        respData => {
+          console.log(respData)
+          // this.currentPage = 1
+          this.getOrderList()
+        })
+      this.detailsDialog = false
+      this.clearForm()
+    },
     reject () {
       let param = {
         orderid: this.modifyRole.id,
