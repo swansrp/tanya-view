@@ -24,7 +24,7 @@
     <el-dialog title="账号信息" :visible.sync="accountDialog" width="40%" center>
       <el-form :model="account" class="demo-ruleForm" ref="detailsForm" :rules="rules">
         <el-form-item label="账号名称" :label-width="formLabelWidth" prop="username">
-          <el-input v-model="account.username" :disabled="operator != null"></el-input>
+          <el-input v-model="account.username" :disabled="getSessionStorage('operator') !== ''"></el-input>
         </el-form-item>
         <el-form-item label="角色名称" :label-width="formLabelWidth" v-if="role.roleType !== ''">
           <el-input v-model="role.title" :disabled="operator != null"></el-input>
@@ -170,6 +170,7 @@ export default {
     this.operatorValidate()
     this.getUserInfo()
     this.getRoleInfo()
+    console.log(this.account)
   },
   methods: {
     validateForm (formName) {
@@ -182,8 +183,10 @@ export default {
             phone: this.account.phone,
             username: this.account.username
           }).then(respData => {
-            this.account = this.$store.getters.self
-            this.account.username = this.getSessionStorage('operator')
+            this.setSessionStorage('operator', this.account.username)
+            this.account.password = ''
+            this.account.passwordConfirm = ''
+            this.accountDialog = false
           })
         } else {
           return false
@@ -192,8 +195,12 @@ export default {
     },
     getUserInfo () {
       this.$store.dispatch('GetUserInfo').then(respData => {
-        this.account = this.$store.getters.self
-        this.account.username = this.getSessionStorage('operator')
+        this.account.name = this.$store.getters.self.name
+        this.account.phone = this.$store.getters.self.phone
+        this.account.email = this.$store.getters.self.email
+        this.account.comment = this.$store.getters.self.comment
+        this.account.roleId = this.$store.getters.self.roleId
+        this.account.username = this.getSessionStorage('operator') ? this.getSessionStorage('operator') : ''
       })
     },
     getRoleInfo () {
@@ -243,6 +250,7 @@ export default {
     height: 30px;
     width: 89%;
   }
+
   .navbar {
     height: 50px;
     line-height: 50px;

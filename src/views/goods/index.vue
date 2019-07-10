@@ -308,7 +308,7 @@ export default {
     handleCurrentChange (currentPage) {
       this.$emit('currentPageChange', currentPage)
       this.currentPage = currentPage
-      this.querySubordinate()
+      this.queryGoods()
     },
     tableRowClassName ({row, rowIndex}) {
       row.index = rowIndex
@@ -328,7 +328,11 @@ export default {
         goods: {
           code: '',
           title: '',
-          comment: ''
+          comment: '',
+          product: '',
+          spec: '',
+          amount: '',
+          unit: ''
         }
       }
     }

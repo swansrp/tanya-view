@@ -1,7 +1,7 @@
 <template>
-    <div class="app-container">
-        <h1 align="center">权限管理系统</h1>
-    </div>
+  <div class="app-container">
+    <h1 align="center">药e销管理平台</h1>
+  </div>
 </template>
 
 <script>

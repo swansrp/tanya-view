@@ -269,7 +269,7 @@ export default {
     handleCurrentChange (currentPage) {
       this.$emit('currentPageChange', currentPage)
       this.currentPage = currentPage
-      this.querySubordinate()
+      this.queryShop()
     },
     tableRowClassName ({row, rowIndex}) {
       row.index = rowIndex

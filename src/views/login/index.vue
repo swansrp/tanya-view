@@ -4,7 +4,7 @@
       <el-form class="login-form" autoComplete="on" :rules="loginRules" :model="loginForm" ref="loginForm"
                label-position="left">
         <div class="title-container">
-          <h3 class="title">权限管理系统</h3>
+          <h3 class="title">药e销管理平台</h3>
         </div>
         <el-form-item prop="userName">
                   <span class="svg-container svg-container_login">
@@ -150,7 +150,7 @@ export default {
         clearTimeout(this.ssoTimer)
         _this.setSessionStorage('auth_token', respData.data.token)
         _this.setSessionStorage('name', respData.data.name)
-        _this.setSessionStorage('operator', respData.data.userName)
+        _this.setSessionStorage('operator', respData.data.userName ? respData.data.userName : '')
         _this.$router.push({path: '/'})
       }).catch(errData => {
         this.ssoTimer = setTimeout(this.sso, 3000)
