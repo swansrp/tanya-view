@@ -112,7 +112,7 @@
       <el-table-column
         align="center"
         label='配置商品'>
-        <el-button size="mini" type="primary" icon="el-icon-edit" circle @click="openBindGoodsDialog">
+        <el-button size="mini" type="primary" icon="el-icon-edit" circle>
         </el-button>
       </el-table-column>
 
@@ -190,7 +190,8 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog :title="bindGoodsTitle" :visible.sync="bindGoodsDialog" width="80%" @open="setData(currentRow, modifyRole)"
+    <el-dialog :title="bindGoodsTitle" :visible.sync="bindGoodsDialog" width="80%"
+               @open="setData(currentRow, modifyRole)"
                @close="clearForm()">
       <el-transfer
         style="text-align: left; display: inline-block"
@@ -401,6 +402,8 @@ export default {
                 info.goodsInfoVO.id
               )
             })
+            console.log('_this.oldBindGoodsList')
+            console.log(_this.oldBindGoodsList)
             resolve()
           }, errResp => {
             console.log('queryBindGoods Failed')
@@ -413,12 +416,13 @@ export default {
       })
     },
     openBindGoodsDialog () {
+      console.log('openBindGoodsDialog')
       const _this = this
       this.detailsDialog = false
-      this.bindGoodsDialog = true
       this.queryGoods()
         .then(() => {
           _this.newBindGoodsList = _this.oldBindGoodsList
+          _this.bindGoodsDialog = true
         })
     },
     handleBindChange (value, direction, movedKeys) {
@@ -495,13 +499,16 @@ export default {
       }
     },
     enableUserEdit (row) {
+      console.log('enableUserEdit')
       this.currentSelectUserId = row.id
       this.currentRow = row
     },
     handleCurrentRowChange (val) {
+      console.log('handleCurrentRowChange')
       this.currentRow = val || {}
     },
     setData (source, target) {
+      console.log('setData')
       target.permissionDetailsVO.traderNumber = source.permissionDetailsVO.traderNumber
       target.permissionDetailsVO.discountNumber = source.permissionDetailsVO.discountNumber
       target.permissionDetailsVO.goodsNumber = source.permissionDetailsVO.goodsNumber
@@ -534,12 +541,15 @@ export default {
       }
     },
     toggleSelection (row, column, cell, event) {
+      console.log('toggleSelection')
       this.currentSelectUserId = row.id
       this.roleTitle = row.title
+      this.currentRow = row
       if (column.label !== '配置商品') {
         this.detailsDialog = true
+      } else {
+        this.openBindGoodsDialog()
       }
-      this.currentRow = row
       const limit = this.currentRow.permissionDetailsVO.goodsNumber
       this.bindGoodsTitle = '商品绑定' + '--最大绑定数量: [' + limit + ']'
     },
