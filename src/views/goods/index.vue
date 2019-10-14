@@ -76,7 +76,7 @@
       <el-table-column
         align="left"
         label='生产厂商'
-        prop="goodsInfoVO.product"
+        prop="goodsInfoVO.production"
         width="300px">
       </el-table-column>
       <el-table-column
@@ -121,7 +121,7 @@
           <el-input v-model="modifyGoods.goods.title"></el-input>
         </el-form-item>
         <el-form-item label="生产厂商" :label-width="formLabelWidth">
-          <el-input v-model="modifyGoods.goods.product" auto-complete="off"></el-input>
+          <el-input v-model="modifyGoods.goods.production" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="规格" :label-width="formLabelWidth">
           <el-input v-model="modifyGoods.goods.spec" auto-complete="off"></el-input>
@@ -169,7 +169,7 @@ export default {
           code: '',
           title: '',
           comment: '',
-          product: '',
+          production: '',
           spec: '',
           amount: '',
           unit: ''
@@ -317,7 +317,7 @@ export default {
       target.goods.id = source.goodsInfoVO.id
       target.goods.code = source.goodsInfoVO.code
       target.goods.title = source.goodsInfoVO.title
-      target.goods.product = source.goodsInfoVO.product
+      target.goods.production = source.goodsInfoVO.production
       target.goods.spec = source.goodsInfoVO.spec
       target.goods.unit = source.goodsInfoVO.unit
       target.goods.amount = source.goodsInfoVO.amount
@@ -329,7 +329,7 @@ export default {
           code: '',
           title: '',
           comment: '',
-          product: '',
+          production: '',
           spec: '',
           amount: '',
           unit: ''
